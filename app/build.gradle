@@ -36,4 +36,9 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // 由于需要在当前使用执行调试 那个lib java程序
+    implementation project(path: ':lib')
+    // 引入 annotation 专门的注解工程
+    implementation project(path: ':annotation')
 }
