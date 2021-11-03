@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.example.annotation.BindView;
+
+@BindView(value = "main_activity")
 public class MainActivity extends AppCompatActivity {
 
     @Override
