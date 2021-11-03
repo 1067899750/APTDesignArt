@@ -49,6 +49,7 @@ public class BindViewProcess extends AbstractProcessor {
     Types typesTool;
     // 专用日志
     Messager messager;
+    //文件类，生成JAVA文件的
     Filer filer;
 
     // 用于做一些初始化的工作，就像Activity的onCreate方法一样
