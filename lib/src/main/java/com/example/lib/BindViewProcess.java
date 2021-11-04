@@ -178,6 +178,7 @@ public class BindViewProcess extends AbstractProcessor {
     }
 
     private boolean setMothed3(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        // 全局扫描 获取 被BindView注解的
         Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(BindView.class);
         for (Element element : elementsAnnotatedWith) {
             // 类的上一个节点是 包
