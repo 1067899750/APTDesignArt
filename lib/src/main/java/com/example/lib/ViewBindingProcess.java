@@ -136,7 +136,7 @@ public class ViewBindingProcess extends AbstractProcessor {
         for (FieldViewBinding data : fileList) {
            List<ParameterSpec> parameterSpecs = new ArrayList<>();
             // 开始真正的使用JavaPoet的方式来生成 Java代码文件
-            MethodSpec methodSpec = MethodSpec.methodBuilder("start" + data.getFileName())
+            MethodSpec methodSpec = MethodSpec.methodBuilder("start_" + data.getValue())
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .returns(void.class)
                     //参数

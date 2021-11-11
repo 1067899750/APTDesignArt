@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.skip_activity).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DataBindingUtil.startMyActivity(MainActivity.this, new Bundle());
+                DataBindingUtil.start_my_activity(MainActivity.this, new Bundle());
             }
         });
     }
