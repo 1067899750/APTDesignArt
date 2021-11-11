@@ -1,15 +1,17 @@
 package com.example.lib;
 
-import com.example.annotation.SkipPager;
+import com.example.annotation.BindView;
+import com.example.lib.Utils.ClassUtils;
 import com.example.lib.Utils.FieldViewBinding;
 import com.google.auto.service.AutoService;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,9 +28,7 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -41,7 +41,7 @@ import javax.lang.model.util.Types;
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 @SupportedAnnotationTypes({"com.example.annotation.SkipPager"})
 @SupportedOptions({"value"})
-public class SkipActivityProcess extends AbstractProcessor {
+public class ViewBindingProcess extends AbstractProcessor {
     // 注解节点
     private Elements mElementTool;
     // 类信息
@@ -81,8 +81,8 @@ public class SkipActivityProcess extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        Map<String, FieldViewBinding> targetMap = getTargetMap(set, roundEnvironment);
-        createJavaFile(targetMap);
+        List<FieldViewBinding> targetList = getTargetMap(set, roundEnvironment);
+        createJavaFile(targetList);
         return false;
     }
 
@@ -94,11 +94,11 @@ public class SkipActivityProcess extends AbstractProcessor {
      * @param roundEnvironment
      * @return
      */
-    private Map<String, FieldViewBinding> getTargetMap(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        Map<String, FieldViewBinding> targetMap = new HashMap<>();
+    private List<FieldViewBinding> getTargetMap(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        List<FieldViewBinding> targetList = new ArrayList<>();
 
         // 1、获取代码中所有使用 @SkipPager 注解修饰的字段
-        Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(SkipPager.class);
+        Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(BindView.class);
         for (Element element : elementsAnnotatedWith) {
             //  获取简单的 类名 (MyActivity)
             String fileName = element.getSimpleName().toString();
@@ -109,7 +109,7 @@ public class SkipActivityProcess extends AbstractProcessor {
             System.out.println("fieldType == " + fieldType);
 
             // 获取注解元素的值
-            String value = element.getAnnotation(SkipPager.class).value();
+            String value = element.getAnnotation(BindView.class).value();
             System.out.println("value == " + value);
 
             // 类的上一个节点是 包 (com.example.annotationdemo)
@@ -119,53 +119,60 @@ public class SkipActivityProcess extends AbstractProcessor {
             //包名 （com.example.annotationdemo）
             Element enclosingElement = element.getEnclosingElement();
             System.out.println("enclosingElement == " + enclosingElement);
-            targetMap.put(fieldType, new FieldViewBinding(fileName, fieldType,
+            targetList.add(new FieldViewBinding(fileName, fieldType,
                     value, packageName));
         }
-
-        return targetMap;
+        return targetList;
     }
 
     /**
      * 解析注解，生产文件
      *
-     * @param fileMap
+     * @param fileList
      */
-    private void createJavaFile(Map<String, FieldViewBinding> fileMap) {
-        for (String keyName : fileMap.keySet()) {
-            FieldViewBinding viewBinding = fileMap.get(keyName);
-            // 最终要生成的类名
-            String className = viewBinding.getFileName() + "$$SkipPager";
-
+    private void createJavaFile(List<FieldViewBinding> fileList) {
+        String packageName = "com.pu.dataBinding";
+        List<MethodSpec> methodS = new ArrayList<>();
+        for (FieldViewBinding data : fileList) {
+           List<ParameterSpec> parameterSpecs = new ArrayList<>();
             // 开始真正的使用JavaPoet的方式来生成 Java代码文件
-            MethodSpec methodSpec = MethodSpec.methodBuilder("main")
+            MethodSpec methodSpec = MethodSpec.methodBuilder("start" + data.getFileName())
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .returns(void.class)
                     //参数
-                    .addParameter(String[].class, "argc")
-                    //方法 S : 表示字符串，T : class 类型
-                    .addStatement("$T.out.print($S)", System.class, "Hello World")
+                    .addParameter(ClassName.bestGuess(ClassUtils.activity), "activity")
+                    .addParameter(Map.class, "v1")
+                    .addStatement("$T intent = new $T()",
+                            //导入 Intent 类
+                            ClassName.bestGuess(ClassUtils.intent),
+                            ClassName.bestGuess(ClassUtils.intent))
+                    //S : 表示字符串，T : class 类型
+                    .addStatement("intent.setClassName($S, $S)", data.getPackageName(), data.getFieldType())
+                    .addStatement("activity.startActivity(intent)")
                     .build();
-
-            //生产的类
-            TypeSpec typeSpec = TypeSpec.classBuilder(className)
-                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                    //方法
-                    .addMethod(methodSpec)
-                    .build();
-
-            //生产文件
-            JavaFile javaFile = JavaFile.builder(viewBinding.getPackageName(), typeSpec)
-                    //文件注释
-                    .addFileComment("Generated code from Butter Knife. Do not modify!")
-                    .build();
-
-            try {
-                javaFile.writeTo(mFiler);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            methodS.add(methodSpec);
         }
+        // 最终要生成的类名
+        String className = "DataBindingUtil";
+        //生产的类
+        TypeSpec typeSpec = TypeSpec.classBuilder(className)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                //方法
+                .addMethods(methodS)
+                .build();
+
+        //生产文件
+        JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
+                //文件注释
+                .addFileComment("构建 Activity 跳转信息")
+                .build();
+
+        try {
+            javaFile.writeTo(mFiler);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

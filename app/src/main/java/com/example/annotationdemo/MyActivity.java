@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.example.annotation.BindView;
 import com.example.annotation.SkipPager;
 
+@BindView(value = "my_activity")
 @SkipPager(value = "MyActivity")
 public class MyActivity extends AppCompatActivity {
 
