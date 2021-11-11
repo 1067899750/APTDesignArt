@@ -140,15 +140,16 @@ public class ViewBindingProcess extends AbstractProcessor {
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .returns(void.class)
                     //参数
-                    .addParameter(ClassName.bestGuess(ClassUtils.activity), "activity")
-                    .addParameter(Map.class, "v1")
+                    .addParameter(ClassName.bestGuess(ClassUtils.activity), "v1")
+                    .addParameter(ClassName.bestGuess(ClassUtils.bundle), "v2")
                     .addStatement("$T intent = new $T()",
                             //导入 Intent 类
                             ClassName.bestGuess(ClassUtils.intent),
                             ClassName.bestGuess(ClassUtils.intent))
                     //S : 表示字符串，T : class 类型
                     .addStatement("intent.setClassName($S, $S)", data.getPackageName(), data.getFieldType())
-                    .addStatement("activity.startActivity(intent)")
+                    .addStatement("intent.putExtras(v2)")
+                    .addStatement("v1.startActivity(intent)")
                     .build();
             methodS.add(methodSpec);
         }

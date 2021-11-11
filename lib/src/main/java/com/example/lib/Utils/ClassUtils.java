@@ -7,5 +7,6 @@ package com.example.lib.Utils;
  */
 public class ClassUtils {
     public static String activity = "android.app.Activity";
+    public static String bundle = "android.os.Bundle";
     public static String intent = "android.content.Intent";
 }
