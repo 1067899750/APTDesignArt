@@ -1,36 +1,24 @@
 package com.example.lib.Utils;
 
-import afu.org.checkerframework.checker.igj.qual.I;
-
 /**
- * @Desc: view
+ * @Desc: activity
  * @Author: puyantao
  * @CreateDate: 2021/11/11 14:34
  */
-public class FieldViewBinding {
+public class ClassViewBinding {
     private String fileName;
     private String fieldType;
-    private int id;
+    private String value;
     private String packageName;
-    private String allClassName;
 
-    public FieldViewBinding() {
+    public ClassViewBinding() {
     }
 
-    public FieldViewBinding(String fileName, String fieldType, int id, String packageName, String allClassName) {
+    public ClassViewBinding(String fileName, String fieldType, String value, String packageName) {
         this.fileName = fileName;
         this.fieldType = fieldType;
-        this.id = id;
+        this.value = value;
         this.packageName = packageName;
-        this.allClassName = allClassName;
-    }
-
-    public String getAllClassName() {
-        return allClassName;
-    }
-
-    public void setAllClassName(String allClassName) {
-        this.allClassName = allClassName;
     }
 
     public String getFileName() {
@@ -49,12 +37,12 @@ public class FieldViewBinding {
         this.fieldType = fieldType;
     }
 
-    public int getId() {
-        return id;
+    public String getValue() {
+        return value;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public String getPackageName() {

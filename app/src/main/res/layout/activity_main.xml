@@ -17,4 +17,10 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="aaaaaa"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

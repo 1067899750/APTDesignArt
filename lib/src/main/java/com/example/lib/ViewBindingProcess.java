@@ -2,7 +2,7 @@ package com.example.lib;
 
 import com.example.annotation.BindView;
 import com.example.lib.Utils.ClassUtils;
-import com.example.lib.Utils.FieldViewBinding;
+import com.example.lib.Utils.ClassViewBinding;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -13,7 +13,6 @@ import com.squareup.javapoet.TypeSpec;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -81,8 +80,9 @@ public class ViewBindingProcess extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        List<FieldViewBinding> targetList = getTargetMap(set, roundEnvironment);
+        List<ClassViewBinding> targetList = getTargetMap(set, roundEnvironment);
         createJavaFile(targetList);
+        // true代表已经处理完毕了，不再处理了
         return false;
     }
 
@@ -94,8 +94,8 @@ public class ViewBindingProcess extends AbstractProcessor {
      * @param roundEnvironment
      * @return
      */
-    private List<FieldViewBinding> getTargetMap(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        List<FieldViewBinding> targetList = new ArrayList<>();
+    private List<ClassViewBinding> getTargetMap(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        List<ClassViewBinding> targetList = new ArrayList<>();
 
         // 1、获取代码中所有使用 @SkipPager 注解修饰的字段
         Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(BindView.class);
@@ -104,7 +104,7 @@ public class ViewBindingProcess extends AbstractProcessor {
             String fileName = element.getSimpleName().toString();
             System.out.println("fileName == " + fileName);
 
-            // 获取字段类型 (com.example.annotationdemo.MyActivity)
+            // 获取字段类型（全类名） (com.example.annotationdemo.MyActivity)
             String fieldType = element.asType().toString();
             System.out.println("fieldType == " + fieldType);
 
@@ -112,14 +112,14 @@ public class ViewBindingProcess extends AbstractProcessor {
             String value = element.getAnnotation(BindView.class).value();
             System.out.println("value == " + value);
 
-            // 类的上一个节点是 包 (com.example.annotationdemo)
+            // 类的上一个节点是 包名  (com.example.annotationdemo)
             String packageName = mElementTool.getPackageOf(element).getQualifiedName().toString();
             System.out.println("packageName == " + packageName);
 
             //包名 （com.example.annotationdemo）
             Element enclosingElement = element.getEnclosingElement();
             System.out.println("enclosingElement == " + enclosingElement);
-            targetList.add(new FieldViewBinding(fileName, fieldType,
+            targetList.add(new ClassViewBinding(fileName, fieldType,
                     value, packageName));
         }
         return targetList;
@@ -130,10 +130,10 @@ public class ViewBindingProcess extends AbstractProcessor {
      *
      * @param fileList
      */
-    private void createJavaFile(List<FieldViewBinding> fileList) {
+    private void createJavaFile(List<ClassViewBinding> fileList) {
         String packageName = "com.pu.dataBinding";
         List<MethodSpec> methodS = new ArrayList<>();
-        for (FieldViewBinding data : fileList) {
+        for (ClassViewBinding data : fileList) {
            List<ParameterSpec> parameterSpecs = new ArrayList<>();
             // 开始真正的使用JavaPoet的方式来生成 Java代码文件
             MethodSpec methodSpec = MethodSpec.methodBuilder("start_" + data.getValue())

@@ -5,8 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
+/**
+ * @Desc:
+ * @Author: puyantao
+ * @CreateDate: 2021/11/12 11:20
+ */
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.SOURCE)
-public @interface BindView {
-    String value();
+public @interface BindId {
+    int id() default -1;
 }

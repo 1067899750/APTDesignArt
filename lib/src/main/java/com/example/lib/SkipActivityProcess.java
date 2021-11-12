@@ -1,7 +1,7 @@
 package com.example.lib;
 
 import com.example.annotation.SkipPager;
-import com.example.lib.Utils.FieldViewBinding;
+import com.example.lib.Utils.ClassViewBinding;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -9,8 +9,6 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,9 +24,7 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
@@ -81,8 +77,9 @@ public class SkipActivityProcess extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        Map<String, FieldViewBinding> targetMap = getTargetMap(set, roundEnvironment);
+        Map<String, ClassViewBinding> targetMap = getTargetMap(set, roundEnvironment);
         createJavaFile(targetMap);
+        // true代表已经处理完毕了，不再处理了
         return false;
     }
 
@@ -94,8 +91,8 @@ public class SkipActivityProcess extends AbstractProcessor {
      * @param roundEnvironment
      * @return
      */
-    private Map<String, FieldViewBinding> getTargetMap(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        Map<String, FieldViewBinding> targetMap = new HashMap<>();
+    private Map<String, ClassViewBinding> getTargetMap(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        Map<String, ClassViewBinding> targetMap = new HashMap<>();
 
         // 1、获取代码中所有使用 @SkipPager 注解修饰的字段
         Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(SkipPager.class);
@@ -119,7 +116,7 @@ public class SkipActivityProcess extends AbstractProcessor {
             //包名 （com.example.annotationdemo）
             Element enclosingElement = element.getEnclosingElement();
             System.out.println("enclosingElement == " + enclosingElement);
-            targetMap.put(fieldType, new FieldViewBinding(fileName, fieldType,
+            targetMap.put(fieldType, new ClassViewBinding(fileName, fieldType,
                     value, packageName));
         }
 
@@ -131,9 +128,9 @@ public class SkipActivityProcess extends AbstractProcessor {
      *
      * @param fileMap
      */
-    private void createJavaFile(Map<String, FieldViewBinding> fileMap) {
+    private void createJavaFile(Map<String, ClassViewBinding> fileMap) {
         for (String keyName : fileMap.keySet()) {
-            FieldViewBinding viewBinding = fileMap.get(keyName);
+            ClassViewBinding viewBinding = fileMap.get(keyName);
             // 最终要生成的类名
             String className = viewBinding.getFileName() + "$$SkipPager";
 

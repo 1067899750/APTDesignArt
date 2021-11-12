@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * @CreateDate: 2021/11/5 14:55
  */
 @Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 public @interface SkipPager {
     String value();
 }
