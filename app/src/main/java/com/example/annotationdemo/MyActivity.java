@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.example.annotation.BindId;
 import com.example.annotation.BindView;
 import com.example.annotation.SkipPager;
+import com.pu.dataBinding.FindViewUtil;
 
 @BindView(value = "my_activity")
 @SkipPager(value = "MyActivity")
@@ -19,5 +20,6 @@ public class MyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        FindViewUtil.init_MyActivity(this);
     }
 }
