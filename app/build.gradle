@@ -44,5 +44,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-
+    // 使用注解处理器
+    // arouter 专用 注解处理器
+    implementation project(path: ':arouter_compiler')
+    //  arouter 专用 注解模块
+    implementation project(path: ':arouter_annotation')
 }
