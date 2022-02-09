@@ -5,7 +5,12 @@ import com.example.arouter_annotation.ARouter;
 import com.example.arouter_annotation.bean.RouterBean;
 import com.example.arouter_compiler.utils.ProcessorConfig;
 import com.google.auto.service.AutoService;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeSpec;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +28,7 @@ import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -114,14 +120,62 @@ public class ARouterProcessor extends AbstractProcessor {
         // 显示类信息（获取被注解的节点，类节点）这也叫自描述 Mirror
         TypeMirror activityMirror = activityType.asType();
 
-        // 遍历所有的类节点
+        // 遍历所有的类节点，element == Activity
         for (Element element : elements) {
             // 获取类节点，获取包节点 （com.xiangxue.xxxxxx）
-            String packageName = elementTool.getPackageOf(element).getQualifiedName().toString();
+//            String packageName = elementTool.getPackageOf(element).getQualifiedName().toString();
 
-            System.out.println("pa ：" + packageName);
+            // 获取简单类名，例如：MainActivity
+            String className = element.getSimpleName().toString();
+            // 打印出 就证明APT没有问题
+            messager.printMessage(Diagnostic.Kind.NOTE, "被@ARetuer注解的类有：" + className);
+            System.out.println("pa ：" + className);
+
+            // 拿到注解
+            ARouter aRouter = element.getAnnotation(ARouter.class);
+
+            // 下面是练习 JavaPoet
+            testJavaPort();
+
         }
-        return true;
+        return false;
+    }
+
+    private void testJavaPort() {
+        /**
+         * package com.example.helloworld;
+         *
+         * public final class HelloWorld {
+         *   public static void main(String[] args) {
+         *     System.out.println("Hello, JavaPoet!");
+         *   }
+         * }
+         */
+        // 1.方法
+        MethodSpec mainMethod = MethodSpec.methodBuilder("main")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(void.class)
+                .addParameter(ClassName.get(String[].class), "args")
+                .addStatement("$T.out.println($S)", ClassName.get(System.class),
+                        "Hello, JavaPoet!")
+                .build();
+
+        // 2.类
+        TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addMethod(mainMethod)
+                .build();
+
+        // 3.包
+        JavaFile packageFile = JavaFile.builder("com.example.arouter_compiler", helloWorld)
+                .build();
+
+        try {
+            // 去生成
+            packageFile.writeTo(filer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
