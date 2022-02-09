@@ -1,6 +1,7 @@
 package com.example.arouter_compiler;
 
 
+import com.example.arouter_annotation.ARouter;
 import com.example.arouter_annotation.bean.RouterBean;
 import com.example.arouter_compiler.utils.ProcessorConfig;
 import com.google.auto.service.AutoService;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -20,7 +22,9 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
@@ -82,7 +86,7 @@ public class ARouterProcessor extends AbstractProcessor {
         } else {
             messager.printMessage(Diagnostic.Kind.NOTE, "APT 环境有问题，请检查 options 与 aptPackage 为null...");
         }
-        System.out.println("====》options ：" + options + "/n"+ " ====》aptPackage ："  + aptPackage);
+        System.out.println("====》options ：" + options + "/n" + " ====》aptPackage ：" + aptPackage);
     }
 
     /**
@@ -95,12 +99,28 @@ public class ARouterProcessor extends AbstractProcessor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        System.out.println("====》options ：" + options + "/n"+ " ====》aptPackage ："  + aptPackage);
-        if (set.isEmpty()) {
-            messager.printMessage(Diagnostic.Kind.NOTE, "并没有发现 被@ARouter注解的地方呀");
-            return false; // 没有机会处理
-        }
+        System.out.println("====》options ：" + options + "/n" + " ====》aptPackage ：" + aptPackage);
+//        if (set.isEmpty()) {
+//            messager.printMessage(Diagnostic.Kind.NOTE, "并没有发现 被@ARouter注解的地方呀");
+//            return false; // 没有机会处理
+//        }
 
+        // 获取所有被 @ARouter 注解的 元素集合
+        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(ARouter.class);
+
+        // 通过Element工具类，获取Activity，Callback类型
+        TypeElement activityType = elementTool.getTypeElement(ProcessorConfig.ACTIVITY_PACKAGE);
+
+        // 显示类信息（获取被注解的节点，类节点）这也叫自描述 Mirror
+        TypeMirror activityMirror = activityType.asType();
+
+        // 遍历所有的类节点
+        for (Element element : elements) {
+            // 获取类节点，获取包节点 （com.xiangxue.xxxxxx）
+            String packageName = elementTool.getPackageOf(element).getQualifiedName().toString();
+
+            System.out.println("pa ：" + packageName);
+        }
         return true;
     }
 }
