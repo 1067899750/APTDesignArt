@@ -25,7 +25,8 @@ import javax.lang.model.element.TypeElement;
 @SupportedAnnotationTypes({ProcessorConfig.AROUTER_PACKAGE})
 // 指定JDK编译版本
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
-// 注解处理器接收的参数
+// 注解处理器能够接收的参数（例如：如果想把Android App信息传递到这个注解处理器(Java工程)，
+// 是没法实现的，所以需要通过这个才能接收到
 @SupportedOptions({ProcessorConfig.OPTIONS, ProcessorConfig.APT_PACKAGE})
 
 public class ARouterProcessor extends AbstractProcessor {
