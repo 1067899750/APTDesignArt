@@ -13,6 +13,7 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     // AS 4.3.1 ->  4.0.1 没有问题
     // As-3.4.1  +  gradle-5.1.1-all + auto-service:1.0-rc4
     compileOnly'com.google.auto.service:auto-service:1.0-rc4'
