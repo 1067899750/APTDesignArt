@@ -14,44 +14,6 @@ public interface ProcessorConfig {
     String OPTIONS = "moduleName"; // 同学们：目的是接收 每个module名称
     String APT_PACKAGE = "packageNameForAPT"; // 同学们：目的是接收 包名（APT 存放的包名）
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // String全类名
     public static final String STRING_PACKAGE = "java.lang.String";
 
@@ -59,7 +21,7 @@ public interface ProcessorConfig {
     public static final String ACTIVITY_PACKAGE = "android.app.Activity";
 
     // ARouter api 包名
-    String AROUTER_API_PACKAGE = "com.xiangxue.arouter_api";
+    String AROUTER_API_PACKAGE = "com.pu.arouter_api";
 
     // ARouter api 的 ARouterGroup 高层标准
     String AROUTER_API_GROUP = AROUTER_API_PACKAGE + ".ARouterGroup";

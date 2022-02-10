@@ -42,7 +42,7 @@ import javax.lang.model.util.Types;
  * @CreateDate: 2021/11/12 11:26
  */
 @AutoService(Processor.class)
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes({"com.example.annotation.BindId"})
 @SupportedOptions({"id"})
 public class BindIdProcess extends AbstractProcessor {

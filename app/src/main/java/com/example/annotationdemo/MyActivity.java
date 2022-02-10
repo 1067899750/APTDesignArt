@@ -8,11 +8,12 @@ import android.widget.TextView;
 import com.example.annotation.BindId;
 import com.example.annotation.BindView;
 import com.example.annotation.SkipPager;
+import com.example.arouter_annotation.ARouter;
 import com.example.arouter_annotation.BindActivity;
 import com.pu.dataBinding.FindViewUtil;
 
 @BindView(value = "my_activity")
-@SkipPager(value = "MyActivity")
+@ARouter(path = "/my/MyActivity")
 public class MyActivity extends AppCompatActivity {
     @BindId(id = R.id.tv)
     public TextView mTextView;

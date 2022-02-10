@@ -4,6 +4,7 @@ package com.example.arouter_compiler;
 import com.example.arouter_annotation.ARouter;
 import com.example.arouter_annotation.bean.RouterBean;
 import com.example.arouter_compiler.utils.ProcessorConfig;
+import com.example.arouter_compiler.utils.ProcessorUtils;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -11,6 +12,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +118,9 @@ public class ARouterProcessor extends AbstractProcessor {
         TypeElement activityType = elementTool.getTypeElement(ProcessorConfig.ACTIVITY_PACKAGE);
 
         // 显示类信息（获取被注解的节点，类节点）这也叫自描述 Mirror
+        //android.app.Activity
         TypeMirror activityMirror = activityType.asType();
+        messager.printMessage(Diagnostic.Kind.NOTE, "mirror >>>>>>>>>>>>>>>>>>>>>> " + activityMirror.toString());
 
         // 遍历所有的类节点，element == Activity
         for (Element element : elements) {
@@ -127,13 +131,120 @@ public class ARouterProcessor extends AbstractProcessor {
             String className = element.getSimpleName().toString();
             // 打印出 就证明APT没有问题
             messager.printMessage(Diagnostic.Kind.NOTE, "被@ARetuer注解的类有：" + className);
-            System.out.println("pa ：" + className);
 
             // 拿到注解
             ARouter aRouter = element.getAnnotation(ARouter.class);
 
+            // TODO  一系列的检查工作
+            // 在循环里面，对 “路由对象” 进行封装
+            RouterBean routerBean = new RouterBean.Builder()
+                    .addGroup(aRouter.group())
+                    .addPath(aRouter.path())
+                    .addElement(element)
+                    .build();
+
+            // ARouter注解的类 必须继承 Activity
+            // Main2Activity的具体详情 例如：继承了 Activity
+            //如：com.example.annotationdemo.MainActivity
+            TypeMirror elementMirror = element.asType();
+            messager.printMessage(Diagnostic.Kind.NOTE, "mirror >>>>>>>>>>>>>>>>>>>>>> " + elementMirror.toString());
+
+            if (typeTool.isSubtype(elementMirror, activityMirror)) {
+                // activityMirror  android.app.Activity描述信息
+                // 最终证明是 Activity
+                routerBean.setTypeEnum(RouterBean.TypeEnum.ACTIVITY);
+            } else {
+                // a.java 的干法 就会抛出异常
+                // 不匹配抛出异常，这里谨慎使用！考虑维护问题
+                throw new RuntimeException("@ARouter注解目前仅限用于Activity类之上");
+            }
+
+            if (checkRouterPath(routerBean)) {
+                messager.printMessage(Diagnostic.Kind.NOTE, "RouterBean Check Success:" + routerBean.toString());
+
+                // 赋值 mAllPathMap 集合里面去
+                List<RouterBean> routerBeans = mAllPathMap.get(routerBean.getGroup());
+
+                // 如果从Map中找不到key为：bean.getGroup()的数据，就新建List集合再添加进Map
+                // 仓库一 没有东西
+                if (ProcessorUtils.isEmpty(routerBeans)){
+                    routerBeans = new ArrayList<>();
+                    routerBeans.add(routerBean);
+                    // 加入仓库一
+                    mAllPathMap.put(routerBean.getGroup(), routerBeans);
+
+                } else {
+                    routerBeans.add(routerBean);
+
+                }
+            } else {
+                // ERROR 编译期发生异常
+                messager.printMessage(Diagnostic.Kind.ERROR, "@ARouter注解未按规范配置，如：/app/MainActivity");
+            }
+        }   // TODO end for  同学们注意：在循环外面了 （此循环结束后，仓库一 缓存一 就存好所有 Path值了）
+
+
+        // mAllPathMap 里面有值了
+        // 定义（生成类文件实现的接口） 有 Path Group
+        // ARouterPath描述
+//        TypeElement pathType = elementTool.getTypeElement(ProcessorConfig.AROUTER_API_PATH);
+//        // ARouterGroup描述
+//        TypeElement groupType = elementTool.getTypeElement(ProcessorConfig.AROUTER_API_GROUP);
+//        messager.printMessage(Diagnostic.Kind.ERROR, "pathType >>>>>> " + pathType.toString());
+//        messager.printMessage(Diagnostic.Kind.ERROR, "groupType >>>>>> " + groupType.toString());
+
+        return true;// 坑：必须写返回值，表示处理@ARouter注解完成
+    }
+
+
+
+
+
+
+
+
+
+    /**
+     * 校验@ARouter注解的值，如果group未填写就从必填项path中截取数据
+     *
+     * @param bean 路由详细信息，最终实体封装类
+     */
+    private boolean checkRouterPath(RouterBean bean) {
+        //"app"   "order"   "personal"
+        String group = bean.getGroup();
+        //"/app/MainActivity"   "/order/Order_MainActivity"   "/personal/Personal_MainActivity"
+        String path = bean.getPath();
+
+        // 校验
+        // @ARouter注解中的path值，必须要以 / 开头（模仿阿里Arouter规范）
+        if (ProcessorUtils.isEmpty(path) || !path.startsWith("/")){
+            messager.printMessage(Diagnostic.Kind.ERROR, "@ARouter注解中的path值，必须要以 / 开头");
+            return false;
         }
-        return false;
+
+        // 比如开发者代码为：path = "/MainActivity"，最后一个 / 符号必然在字符串第1位
+        if (path.lastIndexOf("/") == 0){
+            // 架构师定义规范，让开发者遵循
+            messager.printMessage(Diagnostic.Kind.ERROR, "@ARouter注解未按规范配置，如：/app/MainActivity");
+            return false;
+        }
+
+        // 从第一个 / 到第二个 / 中间截取，如：/app/MainActivity 截取出 app,order,personal 作为group
+        String finalGroup = path.substring(1, path.indexOf("/", 1));
+        messager.printMessage(Diagnostic.Kind.NOTE, ">>>>>>> finalGroup : " + finalGroup);
+
+        // app,order,personal == options
+        // @ARouter注解中的group有赋值情况
+        if (!ProcessorUtils.isEmpty(group) && !group.equals(options)){
+            // 架构师定义规范，让开发者遵循
+            messager.printMessage(Diagnostic.Kind.ERROR, "@ARouter注解中的group值必须和子模块名一致！");
+            return false;
+        } else {
+            messager.printMessage(Diagnostic.Kind.NOTE, ">>>>>>> options : " + options + " >>>>>>> group : " + group);
+            bean.setGroup(finalGroup);
+        }
+        // 如果真的返回ture   RouterBean.group  xxxxx 赋值成功 没有问题
+        return true;
     }
 
 

@@ -37,7 +37,7 @@ import javax.lang.model.util.Types;
  * @CreateDate: 2021/11/11 10:26
  */
 @AutoService(Processor.class)
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes({"com.example.annotation.SkipPager"})
 @SupportedOptions({"value"})
 public class ViewBindingProcess extends AbstractProcessor {
