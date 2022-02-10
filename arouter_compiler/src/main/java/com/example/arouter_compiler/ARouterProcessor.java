@@ -43,7 +43,7 @@ import javax.tools.Diagnostic;
 // 允许/支持的注解类型，让注解处理器处理
 @SupportedAnnotationTypes({ProcessorConfig.AROUTER_PACKAGE})
 // 指定JDK编译版本
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 // 注解处理器能够接收的参数（例如：如果想把Android App信息传递到这个注解处理器(Java工程)，
 // 是没法实现的，所以需要通过这个才能接收到
 @SupportedOptions({ProcessorConfig.OPTIONS, ProcessorConfig.APT_PACKAGE})
@@ -85,14 +85,13 @@ public class ARouterProcessor extends AbstractProcessor {
         // 只有接受到 App壳 传递过来的书籍，才能证明我们的 APT环境搭建完成
         options = processingEnvironment.getOptions().get(ProcessorConfig.OPTIONS);
         aptPackage = processingEnvironment.getOptions().get(ProcessorConfig.APT_PACKAGE);
-        messager.printMessage(Diagnostic.Kind.ERROR, ">>>>>>>>>>>>>>>>>>>>>> options:" + options);
-        messager.printMessage(Diagnostic.Kind.WARNING, ">>>>>>>>>>>>>>>>>>>>>> aptPackage:" + aptPackage);
+        messager.printMessage(Diagnostic.Kind.NOTE, ">>>>>>>>>>>>>>>>>>>>>> options:" + options);
+        messager.printMessage(Diagnostic.Kind.NOTE, ">>>>>>>>>>>>>>>>>>>>>> aptPackage:" + aptPackage);
         if (options != null && aptPackage != null) {
             messager.printMessage(Diagnostic.Kind.NOTE, "APT 环境搭建完成....");
         } else {
             messager.printMessage(Diagnostic.Kind.NOTE, "APT 环境有问题，请检查 options 与 aptPackage 为null...");
         }
-        System.out.println("====》options ：" + options + "/n" + " ====》aptPackage ：" + aptPackage);
     }
 
     /**
@@ -105,11 +104,10 @@ public class ARouterProcessor extends AbstractProcessor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        System.out.println("====》options ：" + options + "/n" + " ====》aptPackage ：" + aptPackage);
-//        if (set.isEmpty()) {
-//            messager.printMessage(Diagnostic.Kind.NOTE, "并没有发现 被@ARouter注解的地方呀");
-//            return false; // 没有机会处理
-//        }
+        if (set.isEmpty()) {
+            messager.printMessage(Diagnostic.Kind.NOTE, "并没有发现 被@ARouter注解的地方呀");
+            return false; // 没有机会处理
+        }
 
         // 获取所有被 @ARouter 注解的 元素集合
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(ARouter.class);
@@ -134,49 +132,11 @@ public class ARouterProcessor extends AbstractProcessor {
             // 拿到注解
             ARouter aRouter = element.getAnnotation(ARouter.class);
 
-            // 下面是练习 JavaPoet
-            testJavaPort();
-
         }
         return false;
     }
 
-    private void testJavaPort() {
-        /**
-         * package com.example.helloworld;
-         *
-         * public final class HelloWorld {
-         *   public static void main(String[] args) {
-         *     System.out.println("Hello, JavaPoet!");
-         *   }
-         * }
-         */
-        // 1.方法
-        MethodSpec mainMethod = MethodSpec.methodBuilder("main")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(void.class)
-                .addParameter(ClassName.get(String[].class), "args")
-                .addStatement("$T.out.println($S)", ClassName.get(System.class),
-                        "Hello, JavaPoet!")
-                .build();
 
-        // 2.类
-        TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addMethod(mainMethod)
-                .build();
-
-        // 3.包
-        JavaFile packageFile = JavaFile.builder("com.example.arouter_compiler", helloWorld)
-                .build();
-
-        try {
-            // 去生成
-            packageFile.writeTo(filer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
 
 

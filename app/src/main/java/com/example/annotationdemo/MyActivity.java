@@ -5,8 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.arouter_annotation.ARouter;
+import com.example.arouter_annotation.BindActivity;
 
-@ARouter(path = "/path/MyActivity")
+@BindActivity(value = "MyActivity")
 public class MyActivity extends AppCompatActivity {
 
 
