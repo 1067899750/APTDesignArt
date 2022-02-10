@@ -237,7 +237,7 @@ public class ARouterProcessor extends AbstractProcessor {
                 // ? extends ARouterPath
                 WildcardTypeName.subtypeOf(ClassName.get(pathType)) // ? extends ARouterLoadPath
 
-                // WildcardTypeName.supertypeOf() 做实验 ? super
+                // WildcardTypeName.supertypeOf()  ：? superARouterLoadPath
                 // 最终的：Map<String, Class<? extends ARouterPath>>
         ));
 
