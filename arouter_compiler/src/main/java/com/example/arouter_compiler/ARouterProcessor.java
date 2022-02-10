@@ -194,8 +194,9 @@ public class ARouterProcessor extends AbstractProcessor {
         // ARouterGroup描述
         TypeElement groupType = elementTool.getTypeElement(ProcessorConfig.AROUTER_API_GROUP);
 
-//        messager.printMessage(Diagnostic.Kind.ERROR, "pathType >>>>>> " + pathType == null ? "null" : pathType.toString());
-//        messager.printMessage(Diagnostic.Kind.ERROR, "groupType >>>>>> " + groupType == null ? "null" : groupType.toString());
+
+        messager.printMessage(Diagnostic.Kind.NOTE, "pathType >>>>>> " + pathType.toString());
+        messager.printMessage(Diagnostic.Kind.NOTE, "groupType >>>>>> " + groupType.toString());
 
         // TODO 第一大步：系列PATH
         try {
@@ -234,12 +235,12 @@ public class ARouterProcessor extends AbstractProcessor {
 
                 // Class<? extends ARouterPath>> 难度
                 ParameterizedTypeName.get(ClassName.get(Class.class),
-                // ? extends ARouterPath
-                WildcardTypeName.subtypeOf(ClassName.get(pathType)) // ? extends ARouterLoadPath
+                        // ? extends ARouterPath
+                        WildcardTypeName.subtypeOf(ClassName.get(pathType)) // ? extends ARouterLoadPath
 
-                // WildcardTypeName.supertypeOf()  ：? superARouterLoadPath
-                // 最终的：Map<String, Class<? extends ARouterPath>>
-        ));
+                        // WildcardTypeName.supertypeOf()  ：? superARouterLoadPath
+                        // 最终的：Map<String, Class<? extends ARouterPath>>
+                ));
 
         // 1.方法 public Map<String, Class<? extends ARouterPath>> getGroupMap()
         MethodSpec.Builder methodBuidler = MethodSpec.methodBuilder(ProcessorConfig.GROUP_METHOD_NAME) // 方法名
