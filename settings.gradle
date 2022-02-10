@@ -1,4 +1,5 @@
-include ':annotation'
-include ':lib'
+include ':arouter_compiler'
+include ':arouter_api'
+include ':arouter_annotation'
 include ':app'
 rootProject.name = "AnnotationDemo"
