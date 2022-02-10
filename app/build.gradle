@@ -32,7 +32,6 @@ android {
         }
     }
 
-
     buildTypes {
         release {
             minifyEnabled false
@@ -60,6 +59,12 @@ dependencies {
     // 使用注解处理器
     //必须用 annotationProcessor 进行注解处理器导包才能进行检查，生成相应文件
     annotationProcessor project(path: ':arouter_compiler')
+    // 由于需要在当前使用执行调试 那个lib java程序
+    annotationProcessor project(path: ':lib')
+
     //  arouter 专用 注解模块
     implementation project(path: ':arouter_annotation')
+    // 引入 annotation 专门的注解工程
+    implementation project(path: ':annotation')
+
 }
