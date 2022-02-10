@@ -11,10 +11,7 @@ import com.example.arouter_annotation.ARouter;
 import com.example.arouter_annotation.BindActivity;
 
 import com.example.annotation.BindId;
-import com.example.annotation.BindView;
-import com.pu.dataBinding.FindViewUtil;
 
-@BindActivity(value = "MainActivity")
 @ARouter(path = "/main/MainActivity")
 public class MainActivity extends AppCompatActivity {
     @BindId(id = R.id.skip_activity)
@@ -27,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FindViewUtil.init_MainActivity(this);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

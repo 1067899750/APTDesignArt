@@ -67,4 +67,6 @@ dependencies {
     // 引入 annotation 专门的注解工程
     implementation project(path: ':annotation')
 
+
+    implementation project(":arouter_api")
 }

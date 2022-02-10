@@ -21,7 +21,7 @@ public interface ProcessorConfig {
     public static final String ACTIVITY_PACKAGE = "android.app.Activity";
 
     // ARouter api 包名
-    String AROUTER_API_PACKAGE = "com.pu.arouter_api";
+    String AROUTER_API_PACKAGE = "com.example.arouter_api";
 
     // ARouter api 的 ARouterGroup 高层标准
     String AROUTER_API_GROUP = AROUTER_API_PACKAGE + ".ARouterGroup";
