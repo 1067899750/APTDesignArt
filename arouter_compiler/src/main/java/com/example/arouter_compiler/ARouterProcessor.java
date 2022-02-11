@@ -94,7 +94,7 @@ public class ARouterProcessor extends AbstractProcessor {
         aptPackage = processingEnvironment.getOptions().get(ProcessorConfig.APT_PACKAGE);
         messager.printMessage(Diagnostic.Kind.NOTE, TAG + " >>>>>>> options:" + options);
         messager.printMessage(Diagnostic.Kind.NOTE, TAG + " >>>>>>> aptPackage:" + aptPackage);
-        if (options != null && aptPackage != null) {
+        if (options != null) {
             messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "APT 环境搭建完成....");
         } else {
             messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "APT 环境有问题，请检查 options 与 aptPackage 为null...");
@@ -130,7 +130,9 @@ public class ARouterProcessor extends AbstractProcessor {
         // 遍历所有的类节点，element == Activity
         for (Element element : elements) {
             // 获取类节点，获取包节点 （com.xiangxue.xxxxxx）
-//            String packageName = elementTool.getPackageOf(element).getQualifiedName().toString();
+            String packageName = elementTool.getPackageOf(element).getQualifiedName().toString();
+
+            aptPackage = packageName == null ? aptPackage : packageName;
 
             // 获取简单类名，例如：MainActivity
             String className = element.getSimpleName().toString();
