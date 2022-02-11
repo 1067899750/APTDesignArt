@@ -1,19 +1,14 @@
 package com.example.lib;
 
 import com.example.annotation.BindId;
-import com.example.annotation.BindView;
-import com.example.lib.Utils.ClassUtils;
-import com.example.lib.Utils.ClassViewBinding;
 import com.example.lib.Utils.FieldViewBinding;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

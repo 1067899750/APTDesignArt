@@ -54,7 +54,7 @@ import javax.tools.Diagnostic;
 @SupportedOptions({ProcessorConfig.OPTIONS, ProcessorConfig.APT_PACKAGE})
 
 public class ARouterProcessor extends AbstractProcessor {
-    private static final String TAG = "ARouterProcessor";
+    private static final String TAG = ARouterProcessor.class.getSimpleName();
 
     // 操作Element的工具类（类，函数，属性，其实都是Element）
     private Elements elementTool;

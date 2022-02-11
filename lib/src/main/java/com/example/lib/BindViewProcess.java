@@ -1,6 +1,6 @@
 package com.example.lib;
 
-import com.example.annotation.BindView;
+import com.example.annotation.BindView1;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -22,7 +22,6 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -39,7 +38,7 @@ import javax.tools.JavaFileObject;
 // 配置版本（Java编译时的版本）
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 // 允许注解处理器  可以去处理的注解，不是所有的注解处理器都可以去处理
-@SupportedAnnotationTypes({"com.example.annotation.BindView"})
+@SupportedAnnotationTypes({"com.example.annotation.BindView1"})
 // 注解处理器能够接收的参数（例如：如果想把AndroidApp信息传递到这个注解处理器(Java工程)，是没法实现的，所以需要通过这个才能接收到）
 @SupportedOptions({"value"})
 public class BindViewProcess extends AbstractProcessor {
@@ -139,7 +138,7 @@ public class BindViewProcess extends AbstractProcessor {
 
     private boolean setMothed2(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         // 全局扫描 获取 被BindView注解的
-        Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(BindView.class);
+        Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(BindView1.class);
         messager.printMessage(Diagnostic.Kind.NOTE, ">>> size:" + elementsAnnotatedWith.size());
         for (Element element : elementsAnnotatedWith) {
             // "public class " + className
@@ -179,7 +178,7 @@ public class BindViewProcess extends AbstractProcessor {
 
     private boolean setMothed3(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         // 全局扫描 获取 被BindView注解的
-        Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(BindView.class);
+        Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(BindView1.class);
         for (Element element : elementsAnnotatedWith) {
             // 类的上一个节点是 包
             String packageName = elementsTool.getPackageOf(element).getQualifiedName().toString();

@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.SOURCE)
-public @interface BindView {
+public @interface BindView1 {
     String value();
 }

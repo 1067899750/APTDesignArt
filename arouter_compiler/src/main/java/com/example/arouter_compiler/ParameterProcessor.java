@@ -1,6 +1,7 @@
 package com.example.arouter_compiler;
 
 import com.example.arouter_annotation.Parameter;
+import com.example.arouter_compiler.factory.ParameterFactory;
 import com.example.arouter_compiler.utils.ProcessorConfig;
 import com.example.arouter_compiler.utils.ProcessorUtils;
 import com.google.auto.service.AutoService;
@@ -23,7 +24,6 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -37,7 +37,7 @@ import javax.tools.Diagnostic;
 @SupportedAnnotationTypes({ProcessorConfig.PARAMETER_PACKAGE})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ParameterProcessor extends AbstractProcessor {
-    private static final String TAG = "ParameterProcessor";
+    private static final String TAG = ParameterProcessor.class.getSimpleName();
     private Elements elementUtils; // 类信息
     private Types typeUtils;  // 具体类型
     private Messager messager; // 日志
@@ -81,12 +81,15 @@ public class ParameterProcessor extends AbstractProcessor {
                     }
                 } // for end  缓存 tempParameterMap有值了
 
+
                 // TODO 生成类文件
                 // 判断是否有需要生成的类文件
                 if (ProcessorUtils.isEmpty(tempParameterMap))
                     return true;
+
                 TypeElement activityType = elementUtils.getTypeElement(ProcessorConfig.ACTIVITY_PACKAGE);
                 TypeElement parameterType = elementUtils.getTypeElement(ProcessorConfig.AROUTER_AIP_PARAMETER_GET);
+
                 // 生成方法
                 // Object targetParameter
                 ParameterSpec parameterSpec = ParameterSpec.builder(TypeName.OBJECT, ProcessorConfig.PARAMETER_NAME).build();
@@ -97,15 +100,18 @@ public class ParameterProcessor extends AbstractProcessor {
                     // key：   Personal_MainActivity
                     // value： [name,sex,age]
                     TypeElement typeElement = entry.getKey();
+
                     // 非Activity直接报错
                     // 如果类名的类型和Activity类型不匹配
                     if (!typeUtils.isSubtype(typeElement.asType(), activityType.asType())) {
                         throw new RuntimeException("@Parameter注解目前仅限用于Activity类之上");
                     }
+
                     // 是Activity
-                    // 获取类名 == MainActivity
+                    // 获取类名 == com.example.annotationdemo.MainActivity
                     ClassName className = ClassName.get(typeElement);
                     messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> className  " + className);
+
                     // 方法生成成功
                     ParameterFactory factory = new ParameterFactory.Builder(parameterSpec)
                             .setMessager(messager)
@@ -134,6 +140,7 @@ public class ParameterProcessor extends AbstractProcessor {
 
                     try {
                         JavaFile.builder(className.packageName(),  typeSpec)
+                                .addFileComment("获取 activity 跳转参数")
                                 .build() // JavaFile构建完成
                                 .writeTo(filer); // 文件生成器开始生成类文件
                     } catch (Exception e) {

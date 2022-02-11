@@ -1,4 +1,4 @@
-package com.example.arouter_compiler;
+package com.example.arouter_compiler.factory;
 
 import com.example.arouter_annotation.Parameter;
 import com.example.arouter_compiler.utils.ProcessorConfig;

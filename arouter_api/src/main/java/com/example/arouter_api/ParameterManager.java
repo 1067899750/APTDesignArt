@@ -16,7 +16,7 @@ public class ParameterManager {
     // LRU缓存 key=类名      value=参数加载接口
     private LruCache<String, ParameterGet> cache;
 
-    // 为了这个效果：Order_MainActivity + $$Parameter
+    // 为了这个效果：MainActivity + $$Parameter
     private static final String FILE_SUFFIX_NAME = "$$Parameter";
 
     public static ParameterManager getInstance() {
@@ -38,7 +38,7 @@ public class ParameterManager {
     // 使用者 只需要调用这一个方法，就可以进行参数的接收
     // 必须拿到 Personal_MainActivity
     public void loadParameter(Activity activity) {
-        // className == Personal_MainActivity
+        // className == MainActivity
         String className = activity.getClass().getName();
         ParameterGet parameterLoad = cache.get(className); // 先从缓存里面拿 如果有  如果没有
         if (null == parameterLoad) { // 缓存里面没东东   提高性能

@@ -7,12 +7,14 @@ package com.example.arouter_compiler.utils;
  */
 public interface ProcessorConfig {
 
-    // @ARouter注解 的 包名 + 类名
+    // @ARouter 注解 的 包名 + 类名
     String AROUTER_PACKAGE = "com.example.arouter_annotation.ARouter";
 
-    // @Parameter注解 的 包名 + 类名
+    // @Parameter 注解 的 包名 + 类名
     String PARAMETER_PACKAGE = "com.example.arouter_annotation.Parameter";
 
+    // @BindView 注解 的 包名 + 类名
+    String BIND_VIEW_PACKAGE = "com.example.arouter_annotation.BindView";
 
     // 接收参数的TAG标记
     String OPTIONS = "moduleName"; // 同学们：目的是接收 每个module名称
@@ -35,6 +37,10 @@ public interface ProcessorConfig {
 
     // ARouter api 的 ParameterGet 高层标准
     String AROUTER_AIP_PARAMETER_GET = AROUTER_API_PACKAGE + ".ParameterGet";
+
+    // ARouter api 的 ParameterGet 高层标准
+    String AROUTER_AIP_BIND_VIEW_GET = AROUTER_API_PACKAGE + ".BindViewGet";
+
 
     // 路由组，中的 Path 里面的 方法名
     String PATH_METHOD_NAME = "getPathMap";
@@ -65,6 +71,15 @@ public interface ProcessorConfig {
     String PARAMETER_FILE_NAME = "$$Parameter";
 
 
+
+    // ARouter aip 的 BindViewGet 的 生成文件名称 $$Parameter
+    String BIND_VIEW_FILE_NAME = "$$BindView";
+
+    //BindView 方法名
+    String BIND_VIEW_METHOD_NAME = "bindView";
+
+    // ARouter api 的 bindViewGet 方法参数的名字
+    String BIND_VIEW_PARAMETER_NAME = "activity";
 }
 
 

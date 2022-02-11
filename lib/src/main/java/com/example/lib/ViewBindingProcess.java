@@ -1,6 +1,6 @@
 package com.example.lib;
 
-import com.example.annotation.BindView;
+import com.example.annotation.BindView1;
 import com.example.lib.Utils.ClassUtils;
 import com.example.lib.Utils.ClassViewBinding;
 import com.google.auto.service.AutoService;
@@ -98,7 +98,7 @@ public class ViewBindingProcess extends AbstractProcessor {
         List<ClassViewBinding> targetList = new ArrayList<>();
 
         // 1、获取代码中所有使用 @SkipPager 注解修饰的字段
-        Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(BindView.class);
+        Set<? extends Element> elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(BindView1.class);
         for (Element element : elementsAnnotatedWith) {
             //  获取简单的 类名 (MyActivity)
             String fileName = element.getSimpleName().toString();
@@ -109,7 +109,7 @@ public class ViewBindingProcess extends AbstractProcessor {
             System.out.println("fieldType == " + fieldType);
 
             // 获取注解元素的值
-            String value = element.getAnnotation(BindView.class).value();
+            String value = element.getAnnotation(BindView1.class).value();
             System.out.println("value == " + value);
 
             // 类的上一个节点是 包名  (com.example.annotationdemo)
