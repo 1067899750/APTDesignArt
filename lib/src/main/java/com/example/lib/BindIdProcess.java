@@ -68,7 +68,7 @@ public class BindIdProcess extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         Map<String, List<FieldViewBinding>> targetMap = getTargetMap(set, roundEnvironment);
         createJavaFile(targetMap);
-        return true;
+        return false;
     }
 
     private Map<String, List<FieldViewBinding>> getTargetMap(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
@@ -144,7 +144,7 @@ public class BindIdProcess extends AbstractProcessor {
             javaFile.writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        };
     }
 
 

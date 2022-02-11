@@ -54,6 +54,8 @@ import javax.tools.Diagnostic;
 @SupportedOptions({ProcessorConfig.OPTIONS, ProcessorConfig.APT_PACKAGE})
 
 public class ARouterProcessor extends AbstractProcessor {
+    private static final String TAG = "ARouterProcessor";
+
     // 操作Element的工具类（类，函数，属性，其实都是Element）
     private Elements elementTool;
 
@@ -90,12 +92,12 @@ public class ARouterProcessor extends AbstractProcessor {
         // 只有接受到 App壳 传递过来的书籍，才能证明我们的 APT环境搭建完成
         options = processingEnvironment.getOptions().get(ProcessorConfig.OPTIONS);
         aptPackage = processingEnvironment.getOptions().get(ProcessorConfig.APT_PACKAGE);
-        messager.printMessage(Diagnostic.Kind.NOTE, ">>>>>>>>>>>>>>>>>>>>>> options:" + options);
-        messager.printMessage(Diagnostic.Kind.NOTE, ">>>>>>>>>>>>>>>>>>>>>> aptPackage:" + aptPackage);
+        messager.printMessage(Diagnostic.Kind.NOTE, TAG + " >>>>>>> options:" + options);
+        messager.printMessage(Diagnostic.Kind.NOTE, TAG + " >>>>>>> aptPackage:" + aptPackage);
         if (options != null && aptPackage != null) {
-            messager.printMessage(Diagnostic.Kind.NOTE, "APT 环境搭建完成....");
+            messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "APT 环境搭建完成....");
         } else {
-            messager.printMessage(Diagnostic.Kind.NOTE, "APT 环境有问题，请检查 options 与 aptPackage 为null...");
+            messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "APT 环境有问题，请检查 options 与 aptPackage 为null...");
         }
     }
 
@@ -110,7 +112,7 @@ public class ARouterProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         if (set.isEmpty()) {
-            messager.printMessage(Diagnostic.Kind.NOTE, "并没有发现 被@ARouter注解的地方呀");
+            messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "并没有发现 被@ARouter注解的地方呀");
             return false; // 没有机会处理
         }
 
@@ -123,7 +125,7 @@ public class ARouterProcessor extends AbstractProcessor {
         // 显示类信息（获取被注解的节点，类节点）这也叫自描述 Mirror
         //android.app.Activity
         TypeMirror activityMirror = activityType.asType();
-        messager.printMessage(Diagnostic.Kind.NOTE, "mirror >>>>>>>>>>>>>>>>>>>>>> " + activityMirror.toString());
+        messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "mirror >>>>>>> " + activityMirror.toString());
 
         // 遍历所有的类节点，element == Activity
         for (Element element : elements) {
@@ -133,7 +135,7 @@ public class ARouterProcessor extends AbstractProcessor {
             // 获取简单类名，例如：MainActivity
             String className = element.getSimpleName().toString();
             // 打印出 就证明APT没有问题
-            messager.printMessage(Diagnostic.Kind.NOTE, "被@ARetuer注解的类有：" + className);
+            messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "被@ARetuer注解的类有：" + className);
 
             // 拿到注解
             ARouter aRouter = element.getAnnotation(ARouter.class);
@@ -150,8 +152,9 @@ public class ARouterProcessor extends AbstractProcessor {
             // Main2Activity的具体详情 例如：继承了 Activity
             //如：com.example.annotationdemo.MainActivity
             TypeMirror elementMirror = element.asType();
-            messager.printMessage(Diagnostic.Kind.NOTE, "mirror >>>>>>>>>>>>>>>>>>>>>> " + elementMirror.toString());
+            messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "mirror >>>>>> " + elementMirror.toString());
 
+            //主要判断注解是否是在 Activity 里面添加
             if (typeTool.isSubtype(elementMirror, activityMirror)) {
                 // activityMirror  android.app.Activity描述信息
                 // 最终证明是 Activity
@@ -163,7 +166,7 @@ public class ARouterProcessor extends AbstractProcessor {
             }
 
             if (checkRouterPath(routerBean)) {
-                messager.printMessage(Diagnostic.Kind.NOTE, "RouterBean Check Success:" + routerBean.toString());
+                messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "RouterBean Check Success:" + routerBean.toString());
 
                 // 赋值 mAllPathMap 集合里面去
                 List<RouterBean> routerBeans = mAllPathMap.get(routerBean.getGroup());
@@ -182,7 +185,7 @@ public class ARouterProcessor extends AbstractProcessor {
                 }
             } else {
                 // ERROR 编译期发生异常
-                messager.printMessage(Diagnostic.Kind.ERROR, "@ARouter注解未按规范配置，如：/app/MainActivity");
+                messager.printMessage(Diagnostic.Kind.ERROR, TAG + " ==> " + "@ARouter注解未按规范配置，如：/app/MainActivity");
             }
         }   // TODO end for  同学们注意：在循环外面了 （此循环结束后，仓库一 缓存一 就存好所有 Path值了）
 
@@ -195,15 +198,15 @@ public class ARouterProcessor extends AbstractProcessor {
         TypeElement groupType = elementTool.getTypeElement(ProcessorConfig.AROUTER_API_GROUP);
 
 
-        messager.printMessage(Diagnostic.Kind.NOTE, "pathType >>>>>> " + pathType.toString());
-        messager.printMessage(Diagnostic.Kind.NOTE, "groupType >>>>>> " + groupType.toString());
+        messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "pathType >>>>>> " + pathType.toString());
+        messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "groupType >>>>>> " + groupType.toString());
 
         // TODO 第一大步：系列PATH
         try {
             createPathFile(pathType); // 生成 Path类
         } catch (IOException e) {
             e.printStackTrace();
-            messager.printMessage(Diagnostic.Kind.NOTE, "在生成PATH模板时，异常了 e:" + e.getMessage());
+            messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "在生成PATH模板时，异常了 e:" + e.getMessage());
         }
 
         // TODO 第二大步：组头（带头大哥）
@@ -211,7 +214,7 @@ public class ARouterProcessor extends AbstractProcessor {
             createGroupFile(groupType, pathType);
         } catch (IOException e) {
             e.printStackTrace();
-            messager.printMessage(Diagnostic.Kind.NOTE, "在生成GROUP模板时，异常了 e:" + e.getMessage());
+            messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "在生成GROUP模板时，异常了 e:" + e.getMessage());
         }
 
         return true;// 坑：必须写返回值，表示处理@ARouter注解完成
@@ -273,7 +276,7 @@ public class ARouterProcessor extends AbstractProcessor {
 
         // 最终生成的类文件名 ARouter$$Group$$ + personal
         String finalClassName = ProcessorConfig.GROUP_FILE_NAME + options;
-        messager.printMessage(Diagnostic.Kind.NOTE, "APT生成路由组Group类文件：" +
+        messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "APT生成路由组Group类文件：" +
                 aptPackage + "." + finalClassName);
 
         // 生成类文件：ARouter$$Group$$app
@@ -359,7 +362,7 @@ public class ARouterProcessor extends AbstractProcessor {
             // 最终生成的类文件名  ARouter$$Path$$personal
             String finalClassName = ProcessorConfig.PATH_FILE_NAME + entry.getKey();
 
-            messager.printMessage(Diagnostic.Kind.NOTE, "APT生成路由Path类文件：" +
+            messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "APT生成路由Path类文件：" +
                     aptPackage + "." + finalClassName);
 
             // 生成类文件：ARouter$$Path$$personal
@@ -393,29 +396,29 @@ public class ARouterProcessor extends AbstractProcessor {
         // 校验
         // @ARouter注解中的path值，必须要以 / 开头（模仿阿里Arouter规范）
         if (ProcessorUtils.isEmpty(path) || !path.startsWith("/")) {
-            messager.printMessage(Diagnostic.Kind.ERROR, "@ARouter注解中的path值，必须要以 / 开头");
+            messager.printMessage(Diagnostic.Kind.ERROR, TAG + " ==> " + "@ARouter注解中的path值，必须要以 / 开头");
             return false;
         }
 
         // 比如开发者代码为：path = "/MainActivity"，最后一个 / 符号必然在字符串第1位
         if (path.lastIndexOf("/") == 0) {
             // 架构师定义规范，让开发者遵循
-            messager.printMessage(Diagnostic.Kind.ERROR, "@ARouter注解未按规范配置，如：/app/MainActivity");
+            messager.printMessage(Diagnostic.Kind.ERROR, TAG + " ==> " + "@ARouter注解未按规范配置，如：/app/MainActivity");
             return false;
         }
 
         // 从第一个 / 到第二个 / 中间截取，如：/app/MainActivity 截取出 app,order,personal 作为group
         String finalGroup = path.substring(1, path.indexOf("/", 1));
-        messager.printMessage(Diagnostic.Kind.NOTE, ">>>>>>> finalGroup : " + finalGroup);
+        messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + ">>>>>>> finalGroup : " + finalGroup);
 
         // app,order,personal == options
         // @ARouter注解中的group有赋值情况
         if (!ProcessorUtils.isEmpty(group) && !group.equals(options)) {
             // 架构师定义规范，让开发者遵循
-            messager.printMessage(Diagnostic.Kind.ERROR, "@ARouter注解中的group值必须和子模块名一致！");
+            messager.printMessage(Diagnostic.Kind.ERROR, TAG + " ==> " + "@ARouter注解中的group值必须和子模块名一致！");
             return false;
         } else {
-            messager.printMessage(Diagnostic.Kind.NOTE, ">>>>>>> options : " + options + " >>>>>>> group : " + group);
+            messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + ">>>>>>> options : " + options + " >>>>>>> group : " + group);
             bean.setGroup(finalGroup);
         }
         // 如果真的返回ture   RouterBean.group  xxxxx 赋值成功 没有问题
