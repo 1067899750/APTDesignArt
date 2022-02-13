@@ -17,6 +17,12 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.skip_activity)
     Button skipBtn;
 
+    @BindView(R.id.skip_order_activity)
+    Button skipOrderBtn;
+
+    @BindView(R.id.skip_personal_activity)
+    Button skipPersonalBtn;
+
     @BindView(R.id.tv_name)
     TextView mTextView;
 
@@ -33,6 +39,30 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 RouterManager.getInstance()
                         .build("/app/MyActivity")
+                        .withString("name", "XaoMing")
+                        .withInt("age", 18)
+                        .navigation(MainActivity.this);
+            }
+        });
+
+
+        skipOrderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RouterManager.getInstance()
+                        .build("/order/OrderActivity")
+                        .withString("name", "XaoMing")
+                        .withInt("age", 18)
+                        .navigation(MainActivity.this);
+            }
+        });
+
+
+        skipPersonalBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RouterManager.getInstance()
+                        .build("/personal/PersonalActivity")
                         .withString("name", "XaoMing")
                         .withInt("age", 18)
                         .navigation(MainActivity.this);

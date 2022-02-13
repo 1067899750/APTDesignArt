@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <Button
@@ -11,16 +12,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="启动 Activity"
-        android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textAllCaps="false" />
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:text="aaaaaa"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:id="@+id/skip_order_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动 OrderActivity"
+        android:textAllCaps="false" />
+
+
+    <Button
+        android:id="@+id/skip_personal_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动 PersonalActivity"
+        android:textAllCaps="false" />
+
+</LinearLayout>
+
+
+
+
+
+
+
+
