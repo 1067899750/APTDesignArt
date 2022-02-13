@@ -116,6 +116,8 @@ public class ParameterProcessor extends AbstractProcessor {
                     ParameterFactory factory = new ParameterFactory.Builder(parameterSpec)
                             .setMessager(messager)
                             .setClassName(className)
+                            .setElementUtils(elementUtils) // TODO 新增点
+                            .setTypeUtils(typeUtils)
                             .build();
 
                     // MainActivity t = (MainActivity) targetParameter;

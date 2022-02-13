@@ -7,12 +7,17 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.Serializable;
+
 /**
  * 跳转时 ，用于参数的传递
  */
 public class BundleManager {
     // Intent传输  携带的值，保存到这里
     private Bundle bundle = new Bundle();
+    // TODO 新增点
+    // 底层业务接口
+    private Call call;
 
     public Bundle getBundle() {
         return this.bundle;
@@ -34,11 +39,23 @@ public class BundleManager {
         return this;
     }
 
+    public BundleManager withSerializable(@NonNull String key, @Nullable Serializable object) {
+        bundle.putSerializable(key, object);
+        return this;
+    }
+
     public BundleManager withBundle(Bundle bundle) {
         this.bundle = bundle;
         return this;
     }
 
+    Call getCall() {
+        return call;
+    }
+
+    void setCall(Call call) {
+        this.call = call;
+    }
 
     // 直接完成跳转
     public Object navigation(Context context) {

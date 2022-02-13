@@ -144,8 +144,15 @@ public class RouterManager {
                             // 例如：getClazz == MainActivity.class
                             Intent intent = new Intent(context, routerBean.getMyClass());
                             intent.putExtras(bundleManager.getBundle()); //参数
-                            context.startActivity(intent, bundleManager.getBundle());
+                            context.startActivity(intent);
                             break;
+
+                        case CALL:
+                            // OrderAddressImpl.class  OrderBean getOrderBean
+                            Class<?> clazz = routerBean.getMyClass(); // OrderUserImpl BaseUser实体
+                            Call call = (Call) clazz.newInstance();
+                            bundleManager.setCall(call);
+                            return bundleManager.getCall();
 
                         // TODO: 2022/2/11 可以扩展
                     }

@@ -6,12 +6,15 @@ import com.example.arouter_compiler.utils.ProcessorUtils;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.TypeName;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 /*
@@ -34,9 +37,16 @@ public class ParameterFactory {
     // Messager 用来报告错误，警告和其他提示信息
     private Messager messager;
 
+    // 获取元素接口信息（生成类文件需要的接口实现类）
+    private TypeMirror callMirror;
+
+    // type(类信息)工具类，包含用于操作TypeMirror的工具方法
+    private Types typeUtils;
+
     private ParameterFactory(Builder builder) {
         this.messager = builder.messager;
         this.className = builder.className;
+        this.typeUtils = builder.typeUtils;
 
         // 生成此方法
         // 通过方法参数体构建方法体：public void getParameter(Object target) {
@@ -44,6 +54,11 @@ public class ParameterFactory {
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(builder.parameterSpec);
+
+        // call自描述 Call接口的
+        this.callMirror = builder.elementUtils
+                .getTypeElement(ProcessorConfig.CALL)
+                .asType();
     }
 
 
@@ -99,19 +114,37 @@ public class ParameterFactory {
             // t.s = t.getIntent().getBooleanExtra("isSuccess", t.age);
             methodContent += "getBooleanExtra($S, " + finalValue + ")";  // 有默认值
 
-        }else  { // String 类型，没有序列号的提供 需要我们自己完成
+        }else  {
+            // String 类型，没有序列号的提供 需要我们自己完成
             // t.s = t.getIntent.getStringExtra("s");
             // typeMirror.toString() java.lang.String
             if (typeMirror.toString().equalsIgnoreCase(ProcessorConfig.STRING_PACKAGE)) {
                 // String类型
                 methodContent += "getStringExtra($S)"; // 没有默认值
+
+            }else if (typeUtils.isSubtype(typeMirror, callMirror)) {
+                // 你居然实现了Call接口
+                // t.orderDrawable = (OrderDrawable) RouterManager.getInstance().build("/order/getDrawable").navigation(t);
+                methodContent = "t." + fieldName + " = ($T) $T.getInstance().build($S).navigation(t)";
+                method.addStatement(methodContent,
+                        TypeName.get(typeMirror),
+                        ClassName.get(ProcessorConfig.AROUTER_API_PACKAGE, ProcessorConfig.ROUTER_MANAGER),
+                        annotationValue);
+                return;
+
+            } else {
+                // 对象的传输
+                methodContent = "t.getIntent().getSerializableExtra($S)";
             }
         }
 
         // TODO: 2022/2/11 可扩展
-
         // 健壮代码
-        if (methodContent.endsWith(")")) {
+        if (methodContent.contains("Serializable")) {
+            // t.student=(Student) t.getIntent().getSerializableExtra("student");  同学们注意：为了强转
+            method.addStatement(finalValue + "=($T)" + methodContent, ClassName.get(element.asType()) ,annotationValue);
+
+        } else if (methodContent.endsWith(")")) {
             //全部的 getBooleanExtra  getIntExtra   getStringExtra
             // 参数二  赋值进去了
             // t.age = t.getIntent().getBooleanExtra("age", t.age ==  9);
@@ -136,6 +169,13 @@ public class ParameterFactory {
         // 方法参数体
         private ParameterSpec parameterSpec;
 
+        // 操作Element工具类 (类、函数、属性都是Element)
+        private Elements elementUtils;
+
+        // type(类信息)工具类，包含用于操作TypeMirror的工具方法
+        private Types typeUtils;
+
+
         public Builder(ParameterSpec parameterSpec) {
             this.parameterSpec = parameterSpec;
         }
@@ -147,6 +187,16 @@ public class ParameterFactory {
 
         public Builder setClassName(ClassName className) {
             this.className = className;
+            return this;
+        }
+
+        public Builder setElementUtils(Elements elementUtils) {
+            this.elementUtils = elementUtils;
+            return this;
+        }
+
+        public Builder setTypeUtils(Types typeUtils) {
+            this.typeUtils = typeUtils;
             return this;
         }
 

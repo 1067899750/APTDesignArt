@@ -43,6 +43,8 @@ public interface ProcessorConfig {
     // ARouter api 的 ParameterGet 高层标准
     String AROUTER_AIP_BIND_VIEW_GET = AROUTER_API_PACKAGE + ".BindViewGet";
 
+    // ARouter api 的 Call 高层标准
+    String CALL = AROUTER_API_PACKAGE + ".Call";
 
     // 路由组，中的 Path 里面的 方法名
     String PATH_METHOD_NAME = "getPathMap";
@@ -82,6 +84,11 @@ public interface ProcessorConfig {
 
     // ARouter api 的 bindViewGet 方法参数的名字
     String BIND_VIEW_PARAMETER_NAME = "activity";
+
+
+    // RouterManager类名
+    String ROUTER_MANAGER = "RouterManager";
+
 }
 
 

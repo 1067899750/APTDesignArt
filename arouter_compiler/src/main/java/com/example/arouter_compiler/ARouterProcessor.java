@@ -127,6 +127,11 @@ public class ARouterProcessor extends AbstractProcessor {
         TypeMirror activityMirror = activityType.asType();
         messager.printMessage(Diagnostic.Kind.NOTE, TAG + " ==> " + "mirror >>>>>>> " + activityMirror.toString());
 
+        // TODO 新增点1
+        TypeElement callType = elementTool.getTypeElement(ProcessorConfig.CALL);
+        // 自描述 callMirror
+        TypeMirror callMirror = callType.asType();
+
         // 遍历所有的类节点，element == Activity
         for (Element element : elements) {
             // 获取类节点，获取包节点 （com.xiangxue.xxxxxx）
@@ -161,6 +166,11 @@ public class ARouterProcessor extends AbstractProcessor {
                 // activityMirror  android.app.Activity描述信息
                 // 最终证明是 Activity
                 routerBean.setTypeEnum(RouterBean.TypeEnum.ACTIVITY);
+
+            } else if (typeTool.isSubtype(elementMirror, callMirror)) {
+                // TODO 新增点2
+                routerBean.setTypeEnum(RouterBean.TypeEnum.CALL);
+
             } else {
                 // a.java 的干法 就会抛出异常
                 // 不匹配抛出异常，这里谨慎使用！考虑维护问题
