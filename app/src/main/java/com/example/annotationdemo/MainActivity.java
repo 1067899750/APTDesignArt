@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.example.arouter_annotation.ARouter;
 import com.example.arouter_annotation.BindView;
 import com.example.arouter_api.BindViewManager;
+import com.example.arouter_api.ParameterManager;
 import com.example.arouter_api.RouterManager;
 
 @ARouter(path = "/app/MainActivity")

@@ -20,6 +20,8 @@ public interface ProcessorConfig {
     String OPTIONS = "moduleName"; // 同学们：目的是接收 每个module名称
     String APT_PACKAGE = "packageNameForAPT"; // 同学们：目的是接收 包名（APT 存放的包名）
 
+    String APT_PACKAGE_NAME = "com.example.arouter";
+
     // String全类名
     String STRING_PACKAGE = "java.lang.String";
 

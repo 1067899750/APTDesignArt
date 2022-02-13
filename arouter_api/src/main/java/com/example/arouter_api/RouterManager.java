@@ -36,6 +36,8 @@ public class RouterManager {
     // 为了拼接，例如:ARouter$$Group$$personal
     private final static String FILE_GROUP_NAME = "ARouter$$Group$$";
 
+    private final static  String PACKAGE_NAME = "com.example.arouter";
+
 
     public static RouterManager getInstance() {
         if (instance == null) {
@@ -90,7 +92,7 @@ public class RouterManager {
     // 真正的导航
     public Object navigation(Context context, BundleManager bundleManager) {
         // 例如：寻找 ARouter$$Group$$personal  寻址   ARouter$$Group$$order   ARouter$$Group$$app
-        String groupClassName = context.getPackageName() + "." + FILE_GROUP_NAME + group;
+        String groupClassName = PACKAGE_NAME + "." + FILE_GROUP_NAME + group;
         Log.e(TAG, "navigation: groupClassName = " + groupClassName);
 
 

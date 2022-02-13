@@ -132,7 +132,7 @@ public class ARouterProcessor extends AbstractProcessor {
             // 获取类节点，获取包节点 （com.xiangxue.xxxxxx）
             String packageName = elementTool.getPackageOf(element).getQualifiedName().toString();
 
-            aptPackage = packageName == null ? aptPackage : packageName;
+            aptPackage = aptPackage == null ? ProcessorConfig.APT_PACKAGE_NAME : aptPackage;
 
             // 获取简单类名，例如：MainActivity
             String className = element.getSimpleName().toString();
