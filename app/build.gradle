@@ -58,7 +58,8 @@ dependencies {
 
     implementation project(path: ':common')
 
-
-    implementation project(path: ':order')
-    implementation project(path: ':personal')
+    if (isRelease) {
+        implementation project(path: ':order')
+        implementation project(path: ':personal')
+    }
 }

@@ -17,6 +17,12 @@ ext {
     ]
 
 
+    // order，personal，自己的包名
+    app_appid = [
+            "order": "com.example.order",
+            "personal": "com.example.personal"
+    ]
+
 
     // 定义依赖项，体现真实开发项目的过程
     app_dependencies = [
