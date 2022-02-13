@@ -27,15 +27,20 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
 
+        // 这个方法接收三个非空的参数，第一个：确定值的类型，第二个：指定key的名字，第三个：传值（必须是String）
+        // 为什么需要定义这个？因为src代码中有可能需要用到跨模块交互，如果是组件化模块显然不行
+        // 切记：不能在android根节点，只能在defaultConfig或buildTypes节点下
+        buildConfigField("boolean", "isRelease", String.valueOf(isRelease))
+
+        // 都是为了 传递给 注解处理器
         // 在gradle文件中配置选项参数值（用于APT传参接收）
         // 同学们注意：切记：必须写在defaultConfig节点下
         javaCompileOptions {
             annotationProcessorOptions {
-                // project.getName() == app
-                arguments = [
-                        moduleName: project.getName(),
-                        packageNameForAPT : packageNameForAPT
-                ]
+                // project.getName() == order
+                // this.project.getName() == order
+                // this.getProject().getName() == order
+                arguments = [moduleName: project.getName(), packageNameForAPT: packageNameForAPT]
             }
         }
     }
@@ -50,13 +55,42 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    //避免资源名冲突
+//    resourcePrefix "order_"
+
+    // 分模块，根据是否是debug，使用不同的 Manifest
+    sourceSets {
+        main {
+            if (!isRelease.toBoolean()) {
+                // 如果是组件化模式，需要单独运行时
+                manifest.srcFile 'src/main/debug/AndroidManifest.xml'
+            } else {
+                // 集成化模式，整个项目打包apk
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+                java {
+                    // release 时 debug 目录下文件不需要合并到主工程
+                    exclude '**/debug/**'
+                }
+                // resources {
+                // exclude '**/debug/**'
+                // }
+            }
+        }
+    }
 }
 
 dependencies {
-
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+
+    // 使用注解处理器
+    //必须用 annotationProcessor 进行注解处理器导包才能进行检查，生成相应文件
+    annotationProcessor project(path: ':arouter_compiler')
+    // 由于需要在当前使用执行调试 那个lib java程序
+    annotationProcessor project(path: ':lib')
+
+    implementation project(path: ':common')
 }
