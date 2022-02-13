@@ -139,7 +139,10 @@ public class RouterBean {
     @Override
     public String toString() {
         return "RouterBean{" +
-                "path='" + path + '\'' +
+                "typeEnum=" + typeEnum +
+                ", element=" + element +
+                ", myClass=" + myClass +
+                ", path='" + path + '\'' +
                 ", group='" + group + '\'' +
                 '}';
     }
