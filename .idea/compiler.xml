@@ -22,7 +22,10 @@
       <module name="AnnotationDemo.annotatiom" target="1.8" />
       <module name="AnnotationDemo.app" target="1.8" />
       <module name="AnnotationDemo.arouter_api" target="1.8" />
+      <module name="AnnotationDemo.common" target="1.8" />
       <module name="AnnotationDemo.mylibrary" target="1.8" />
+      <module name="AnnotationDemo.order" target="1.8" />
+      <module name="AnnotationDemo.personal" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

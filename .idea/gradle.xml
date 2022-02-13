@@ -17,7 +17,10 @@
             <option value="$PROJECT_DIR$/arouter_annotation" />
             <option value="$PROJECT_DIR$/arouter_api" />
             <option value="$PROJECT_DIR$/arouter_compiler" />
+            <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/lib" />
+            <option value="$PROJECT_DIR$/order" />
+            <option value="$PROJECT_DIR$/personal" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

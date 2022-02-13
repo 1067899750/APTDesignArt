@@ -1,23 +1,24 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
 }
 
 // 定义变量，同学们注意：可以定义变量，也可以不定义变量
 def app_android = this.getRootProject().ext.android
 def app_version = this.getRootProject().ext.version
 
+
 android {
     compileSdkVersion app_android.compileSdkVersion
     buildToolsVersion app_android.buildToolsVersion
 
     defaultConfig {
-        applicationId app_android.applicationId
         minSdkVersion app_android.minSdkVersion
         targetSdkVersion app_android.targetSdkVersion
         versionCode app_version.versionCode
         versionName app_version.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
 
         // 在gradle文件中配置选项参数值（用于APT传参接收）
         // 同学们注意：切记：必须写在defaultConfig节点下
@@ -46,19 +47,9 @@ android {
 
 dependencies {
 
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
     testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
-    // 使用注解处理器
-    //必须用 annotationProcessor 进行注解处理器导包才能进行检查，生成相应文件
-    annotationProcessor project(path: ':arouter_compiler')
-    // 由于需要在当前使用执行调试 那个lib java程序
-    annotationProcessor project(path: ':lib')
-
-    implementation project(path: ':common')
-
-
-    implementation project(path: ':order')
-    implementation project(path: ':personal')
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
