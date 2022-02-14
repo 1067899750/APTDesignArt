@@ -3,7 +3,7 @@
     package="com.example.personal">
 
     <application>
-        <activity android:name=".PersonalActivity"></activity>
+        <activity android:name=".PersonalActivity"/>
     </application>
 
 </manifest>

@@ -3,7 +3,7 @@
     package="com.example.order">
 
     <application>
-        <activity android:name=".OrderActivity"></activity>
+        <activity android:name=".OrderActivity"/>
     </application>
 
 </manifest>
