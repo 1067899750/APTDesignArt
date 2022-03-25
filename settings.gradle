@@ -9,4 +9,4 @@ include ':annotation'
 include ':lib'
 
 include ':app'
-rootProject.name = "AnnotationDemo"
+rootProject.name = "APTDesignArt"
