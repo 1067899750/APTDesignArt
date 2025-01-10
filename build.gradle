@@ -6,6 +6,9 @@ apply {
 
 buildscript {
     repositories {
+        maven { url = uri("https://maven.aliyun.com/repository/public") }
+        maven { url = uri("https://maven.aliyun.com/repository/google") }
+        gradlePluginPortal()
         google()
         jcenter()
     }
@@ -19,6 +22,9 @@ buildscript {
 
 allprojects {
     repositories {
+        // 改为阿里云的镜像地址
+        maven { url = uri("https://maven.aliyun.com/repository/public") }
+        maven { url = uri("https://maven.aliyun.com/repository/google") }
         google()
         jcenter()
     }
